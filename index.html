@@ -1,143 +1,335 @@
-
 <!DOCTYPE html>
-<html lang="en">
+
+<html lang="ru">
+
 <head>
+
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#080808">
-<title>MANY LAKE — Looksmaxxing</title>
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>MANY LAKE</title>
+
 <style>
-*{box-sizing:border-box;margin:0;padding:0}
-body{background:#080808;color:#f5f5f5;font-family:Arial,sans-serif;padding:24px 20px}
-header{display:flex;justify-content:space-between;align-items:center;padding:10px 0 35px}
-.logo{font-size:22px;font-weight:800;letter-spacing:3px}
-.tag{font-size:9px;color:#888;letter-spacing:2px}
-.hero{padding:30px 0}
-.eyebrow{font-size:10px;letter-spacing:3px;color:#999}
-h1{font-size:43px;line-height:1.08;margin:18px 0}
-h1 span{color:#888}
-.sub{color:#999;font-size:14px;line-height:1.7;max-width:300px}
-button{cursor:pointer}
-.main-btn{width:100%;padding:19px;background:#eee;color:#080808;border:0;border-radius:3px;font-weight:bold;letter-spacing:2px;margin-top:26px}
-.section-title{font-size:11px;color:#888;letter-spacing:3px;margin:38px 0 15px}
-.card{background:#111;border:1px solid #252525;padding:22px;margin-bottom:12px;border-radius:5px;cursor:pointer}
-.card h3{font-size:15px;margin-bottom:9px}
-.card p{color:#888;font-size:12px;line-height:1.6}
-.arrow{float:right;color:#aaa;font-size:20px}
-.upload{border:1px dashed #555;padding:30px 15px;text-align:center;border-radius:5px;margin-top:15px}
-.upload label{display:block;cursor:pointer;color:#ddd;font-size:13px}
-.upload p{font-size:11px;color:#777;margin-top:9px}
-#photo{display:none}
-#preview{display:none;width:100%;max-height:300px;object-fit:contain;margin-top:18px;border-radius:4px}
-#message{font-size:12px;color:#aaa;margin-top:14px;line-height:1.6}
-.panel{display:none;margin-top:15px}
-.back{background:none;border:1px solid #444;color:white;padding:12px 18px;margin-bottom:22px}
-.panel h2{font-size:24px;margin-bottom:12px}
-footer{text-align:center;color:#555;font-size:10px;letter-spacing:2px;margin:45px 0 15px}
+
+*{box-sizing:border-box}
+
+body{margin:0;background:#080808;color:#fff;font-family:Arial,sans-serif;padding:20px}
+
+.container{max-width:700px;margin:auto}
+
+header{text-align:center;padding:25px 0 35px}
+
+.logo{font-size:32px;font-weight:900;letter-spacing:6px}
+
+.subtitle{font-size:11px;color:#777;letter-spacing:3px;margin-top:10px}
+
+.card{background:#111;border:1px solid #292929;border-radius:17px;padding:20px;margin:16px 0}
+
+h2{font-size:18px}
+
+p{line-height:1.5}
+
+.muted{color:#888;font-size:13px}
+
+button{width:100%;padding:16px;background:#fff;color:#000;border:0;border-radius:12px;font-weight:bold;font-size:15px;margin-top:12px}
+
+button:active{opacity:.7}
+
+input[type=file]{width:100%;margin:15px 0;color:#aaa}
+
+#preview{display:none;width:100%;max-height:350px;object-fit:contain;border-radius:12px;margin-top:10px}
+
+.hidden{display:none}
+
+.score{text-align:center;padding:25px}
+
+.score-number{font-size:58px;font-weight:bold}
+
+.level{font-size:21px;font-weight:bold;margin-top:8px}
+
+.parameter{margin:20px 0}
+
+.parameter-top{display:flex;justify-content:space-between;font-size:14px;margin-bottom:9px}
+
+.bar{height:8px;background:#292929;border-radius:10px;overflow:hidden}
+
+.fill{height:100%;background:#eee;border-radius:10px}
+
+.chart{height:160px;display:flex;align-items:end;gap:7px;padding:10px 0 25px;border-bottom:1px solid #333}
+
+.chart-column{flex:1;background:#aaa;border-radius:5px 5px 0 0;position:relative;min-height:3px}
+
+.chart-column span{position:absolute;bottom:-22px;left:50%;transform:translateX(-50%);font-size:9px;color:#888}
+
+input[type=range]{width:100%;accent-color:white}
+
+.note{font-size:11px;color:#777;line-height:1.5}
+
 </style>
+
 </head>
+
 <body>
+
+<div class="container">
+
 <header>
+
 <div class="logo">MANY LAKE</div>
-<div class="tag">LOOKSMAXXING</div>
+
+<div class="subtitle">СТАНЬ ЛУЧШЕЙ ВЕРСИЕЙ СЕБЯ</div>
+
 </header>
 
-<main id="home">
-<section class="hero">
-<div class="eyebrow">YOUR PERSONAL GLOW UP</div>
-<h1>DISCOVER<br>YOUR <span>BEST</span><br>VERSION.</h1>
-<p class="sub">Understand your facial features. Discover your strengths. Improve your appearance.</p>
-<button class="main-btn" onclick="openPanel('face')">START ANALYSIS ↗</button>
-</section>
+<div class="card">
 
-<div class="section-title">YOUR ANALYSIS</div>
+<h2>Анализ лица</h2>
 
-<div class="card" onclick="openPanel('face')">
-<span class="arrow">↗</span>
-<h3>01 — FACE RATING</h3>
-<p>Upload a photo to begin your appearance journey.</p>
+<p class="muted">Загрузи фотографию лица для подготовки анализа.</p>
+
+<input type="file" id="photo" accept="image/*">
+
+<img id="preview" alt="Предпросмотр фотографии">
+
+<button onclick="startAnalysis()">НАЧАТЬ АНАЛИЗ</button>
+
+<p class="note">На этом этапе доступен предпросмотр фотографии и настройка оценок. Подключение автоматического AI-анализа будет следующим этапом.</p>
+
 </div>
-<div class="card" onclick="openPanel('facial')">
-<span class="arrow">↗</span>
-<h3>02 — FACIAL FEATURES</h3>
-<p>Explore jawline, cheekbones, eyes and facial symmetry.</p>
+
+<div id="results" class="hidden">
+
+<div class="card score">
+
+<div class="muted">ОБЩИЙ РЕЗУЛЬТАТ</div>
+
+<div><span class="score-number" id="total">5.0</span><span>/10</span></div>
+
+<div class="level" id="level">LTN</div>
+
+<p class="muted">Среднее значение параметров</p>
+
 </div>
-<div class="card" onclick="openPanel('skin')">
-<span class="arrow">↗</span>
-<h3>03 — SKIN ANALYSIS</h3>
-<p>Learn about skin appearance and skincare basics.</p>
+
+<div class="card">
+
+<h2>График результатов</h2>
+
+<div class="chart" id="chart"></div>
+
 </div>
-<div class="card" onclick="openPanel('guide')">
-<span class="arrow">↗</span>
-<h3>04 — LOOKSMAXXING GUIDE</h3>
-<p>Discover practical tips for grooming and personal style.</p>
+
+<div class="card">
+
+<h2>Подробная оценка лица</h2>
+
+<p class="muted">Оценки можно менять вручную. Каждый параметр оценивается отдельно.</p>
+
+<div id="parameters"></div>
+
 </div>
-</main>
 
-<section class="panel" id="face">
-<button class="back" onclick="goHome()">← BACK</button>
-<div class="eyebrow">01 / FACE RATING</div>
-<h2>Upload your photo</h2>
-<p class="sub">Choose a clear, front-facing photo with good lighting.</p>
-<div class="upload">
-<label for="photo">＋ SELECT PHOTO</label>
-<p>JPG, PNG or WEBP</p>
-<input id="photo" type="file" accept="image/*">
-<img id="preview" alt="Photo preview">
+<div class="card">
+
+<h2>Таблица уровней</h2>
+
+<p>1–2 — Sub3</p>
+
+<p>3–4 — Sub5</p>
+
+<p>5 — LTN</p>
+
+<p>6 — MTN</p>
+
+<p>7 — HTN</p>
+
+<p>8 — Chad</p>
+
+<p>9–10 — True Adam</p>
+
+<p class="note">Это условная игровая шкала, а не научная оценка привлекательности.</p>
+
 </div>
-<div id="message">Your photo preview stays on this page. AI scoring is not connected yet.</div>
-</section>
 
-<section class="panel" id="facial">
-<button class="back" onclick="goHome()">← BACK</button>
-<div class="eyebrow">02 / FACIAL FEATURES</div>
-<h2>Facial features</h2>
-<div class="card"><h3>JAWLINE</h3><p>Learn about jawline shape and definition.</p></div>
-<div class="card"><h3>CHEEKBONES</h3><p>Explore cheekbone structure.</p></div>
-<div class="card"><h3>EYES</h3><p>Explore eye shape and appearance.</p></div>
-<div class="card"><h3>SYMMETRY</h3><p>Learn what facial symmetry means.</p></div>
-</section>
+</div>
 
-<section class="panel" id="skin">
-<button class="back" onclick="goHome()">← BACK</button>
-<div class="eyebrow">03 / SKIN ANALYSIS</div>
-<h2>Skin care</h2>
-<div class="card"><h3>DAILY ROUTINE</h3><p>Gentle cleansing, moisturizer and daily SPF.</p></div>
-<div class="card"><h3>SKIN HEALTH</h3><p>Build a simple skincare routine based on your needs.</p></div>
-</section>
+<footer class="muted" style="text-align:center;padding:25px">
 
-<section class="panel" id="guide">
-<button class="back" onclick="goHome()">← BACK</button>
-<div class="eyebrow">04 / YOUR GUIDE</div>
-<h2>Looksmaxxing guide</h2>
-<div class="card"><h3>GROOMING</h3><p>Haircut, eyebrows and personal care.</p></div>
-<div class="card"><h3>STYLE</h3><p>Find clothes and colors that suit your style.</p></div>
-<div class="card"><h3>HABITS</h3><p>Sleep, exercise and healthy daily habits.</p></div>
-</section>
+MANY LAKE © 2026
 
-<footer>MANY LAKE © 2026 — LOOK BETTER. FEEL BETTER.</footer>
+</footer>
+
+</div>
 
 <script>
-function openPanel(name){
-document.getElementById('home').style.display='none';
-document.querySelectorAll('.panel').forEach(p=>p.style.display='none');
-document.getElementById(name).style.display='block';
-window.scrollTo(0,0);
-}
-function goHome(){
-document.querySelectorAll('.panel').forEach(p=>p.style.display='none');
-document.getElementById('home').style.display='block';
-window.scrollTo(0,0);
-}
-document.getElementById('photo').addEventListener('change',function(){
+
+const names=[
+
+"Форма лица",
+
+"Челюсть",
+
+"Подбородок",
+
+"Скулы",
+
+"Глаза",
+
+"Брови",
+
+"Нос",
+
+"Губы",
+
+"Кожа",
+
+"Волосы",
+
+"Симметрия",
+
+"Общая гармония"
+
+];
+
+let scores=Array(12).fill(5);
+
+document.getElementById("photo").addEventListener("change",function(){
+
 const file=this.files[0];
+
 if(!file)return;
-if(!file.type.startsWith('image/'))return;
-const preview=document.getElementById('preview');
+
+const preview=document.getElementById("preview");
+
 preview.src=URL.createObjectURL(file);
-preview.style.display='block';
-document.getElementById('message').textContent='Photo loaded. Automatic AI analysis will be added in the next development stage.';
+
+preview.style.display="block";
+
 });
+
+function getLevel(score){
+
+if(score<3)return "Sub3";
+
+if(score<5)return "Sub5";
+
+if(score<6)return "LTN";
+
+if(score<7)return "MTN";
+
+if(score<8)return "HTN";
+
+if(score<9)return "Chad";
+
+return "True Adam";
+
+}
+
+function startAnalysis(){
+
+const file=document.getElementById("photo").files[0];
+
+if(!file){
+
+alert("Сначала загрузи фотографию!");
+
+return;
+
+}
+
+document.getElementById("results").classList.remove("hidden");
+
+render();
+
+document.getElementById("results").scrollIntoView({behavior:"smooth"});
+
+}
+
+function render(){
+
+const average=scores.reduce((a,b)=>a+b,0)/scores.length;
+
+document.getElementById("total").textContent=average.toFixed(1);
+
+document.getElementById("level").textContent=getLevel(average);
+
+const parameters=document.getElementById("parameters");
+
+parameters.innerHTML="";
+
+names.forEach((name,i)=>{
+
+const item=document.createElement("div");
+
+item.className="parameter";
+
+item.innerHTML=`
+
+<div class="parameter-top">
+
+<span>${name}</span>
+
+<strong id="value${i}">${scores[i]}/10</strong>
+
+</div>
+
+<input type="range" min="1" max="10" step="1" value="${scores[i]}" id="range${i}">
+
+<div class="bar"><div class="fill" id="fill${i}" style="width:${scores[i]*10}%"></div></div>
+
+`;
+
+parameters.appendChild(item);
+
+item.querySelector("input").addEventListener("input",function(){
+
+scores[i]=Number(this.value);
+
+document.getElementById("value"+i).textContent=scores[i]+"/10";
+
+document.getElementById("fill"+i).style.width=scores[i]*10+"%";
+
+updateSummary();
+
+});
+
+});
+
+updateSummary();
+
+}
+
+function updateSummary(){
+
+const average=scores.reduce((a,b)=>a+b,0)/scores.length;
+
+document.getElementById("total").textContent=average.toFixed(1);
+
+document.getElementById("level").textContent=getLevel(average);
+
+const chart=document.getElementById("chart");
+
+chart.innerHTML="";
+
+scores.forEach((score,i)=>{
+
+const column=document.createElement("div");
+
+column.className="chart-column";
+
+column.style.height=(score*10)+"%";
+
+column.innerHTML="<span>"+names[i].split(" ")[0]+"</span>";
+
+chart.appendChild(column);
+
+});
+
+}
+
 </script>
+
 </body>
+
 </html>
