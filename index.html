@@ -99,16 +99,19 @@ input[type=range]{width:100%;accent-color:white}
 </div>
 
 <div class="card">
-<h2>Подробный анализ</h2><div class="card">
-  <h2>Детальный разбор лица</h2>
-  <p class="muted">
-    Индивидуальное объяснение результатов анализа.
-  </p>
-  <div id="detailAnalysis"></div>
-  <p class="note">
-    Показатели основаны на геометрических измерениях и условных формулах.
-    Они не определяют привлекательность человека.
-  </p>
+<h2>Подробный анализ</h2>
+<p class="muted">Показатели можно менять вручную.</p>
+<div id="parameters"></div>
+</div>
+
+<div class="card">
+<h2>Детальный разбор лица</h2>
+<p class="muted">Индивидуальное объяснение результатов анализа.</p>
+<div id="detailAnalysis"></div>
+<p class="note">
+Результаты основаны на геометрических измерениях,
+а не на научной оценке привлекательности.
+</p>
 </div>
 <p class="muted">Показатели можно менять вручную.</p>
 <div id="parameters"></div>
@@ -133,7 +136,7 @@ MANY LAKE © 2026
 </footer>
 </div>
 
-<script type="module">renderDetailedAnalysis();
+<script type="module"
 import {
   FilesetResolver,
   FaceLandmarker
