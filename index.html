@@ -281,7 +281,59 @@ function calculate(p) {
   ];
 }
 
-function updateSummary() {
+function updateSummary() {function renderDetailedAnalysis() {
+  const container = document.getElementById("detailAnalysis");
+  container.innerHTML = "";
+
+  const descriptions = [
+    ["Форма лица", "Соотношение ширины и высоты лица."],
+    ["Линия челюсти", "Ширина нижней части лица."],
+    ["Подбородок", "Ширина подбородка относительно лица."],
+    ["Скулы", "Ширина средней части лица."],
+    ["Глаза", "Размер глаз относительно ширины лица."],
+    ["Область бровей", "Расстояние между ориентирами бровей и глаз."],
+    ["Нос", "Ширина носа относительно лица."],
+    ["Губы", "Ширина рта относительно лица."],
+    ["Симметрия глаз", "Сравнение геометрических размеров глаз."],
+    ["Симметрия лица", "Сравнение левой и правой сторон лица."],
+    ["Средняя треть лица", "Соотношение длины носа и высоты лица."]
+  ];
+
+  scores.forEach((score, i) => {
+    const item = document.createElement("div");
+    item.className = "detail-item";
+
+    const heading = document.createElement("div");
+    heading.className = "detail-heading";
+
+    const title = document.createElement("span");
+    title.textContent = descriptions[i][0];
+
+    const value = document.createElement("span");
+    value.className = "detail-score";
+    value.textContent = score.toFixed(1) + "/10";
+
+    heading.append(title, value);
+
+    const description = document.createElement("div");
+    description.className = "detail-description";
+    description.textContent = descriptions[i][1];
+
+    const advice = document.createElement("div");
+    advice.className = "detail-advice";
+
+    if (score >= 8) {
+      advice.textContent = "Совпадение с выбранным геометрическим ориентиром высокое.";
+    } else if (score >= 6) {
+      advice.textContent = "Совпадение с выбранным геометрическим ориентиром умеренное.";
+    } else {
+      advice.textContent = "Результат заметно отличается от выбранного геометрического ориентира. Проверь ракурс и освещение.";
+    }
+
+    item.append(heading, description, advice);
+    container.appendChild(item);
+  });function showResults() {
+}
   const average = scores.reduce((a,b)=>a+b,0)/scores.length;
 
   document.getElementById("total").textContent = average.toFixed(1);
