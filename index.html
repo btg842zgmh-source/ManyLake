@@ -328,6 +328,222 @@ chart.appendChild(column);
 
 }
 
+<script type="module">
+import {
+  FilesetResolver,
+  FaceLandmarker
+} from "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@latest/vision_bundle.mjs";
+
+const photo = document.getElementById("photo");
+const preview = document.getElementById("preview");
+const results = document.getElementById("results");
+const button = document.querySelector('button[onclick="startAnalysis()"]');
+
+let landmarker = null;
+
+const status = document.createElement("p");
+status.className = "muted";
+status.style.textAlign = "center";
+button.after(status);
+
+const names = [
+  "Форма лица",
+  "Челюсть",
+  "Подбородок",
+  "Скулы",
+  "Глаза",
+  "Брови",
+  "Нос",
+  "Губы",
+  "Симметрия глаз",
+  "Симметрия лица",
+  "Пропорции средней трети"
+];
+
+let scores = [];
+
+photo.addEventListener("change", () => {
+  const file = photo.files[0];
+  if (!file) return;
+
+  preview.src = URL.createObjectURL(file);
+  preview.style.display = "block";
+  status.textContent = "Фотография загружена. Можно начинать анализ.";
+});
+
+async function loadModel() {
+  if (landmarker) return;
+
+  status.textContent = "Загружаем модель анализа лица...";
+
+  const vision = await FilesetResolver.forVisionTasks(
+    "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@latest/wasm"
+  );
+
+  landmarker = await FaceLandmarker.createFromOptions(vision, {
+    baseOptions: {
+      modelAssetPath:
+        "https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/1/face_landmarker.task"
+    },
+    runningMode: "IMAGE",
+    numFaces: 1
+  });
+}
+
+function distance(a, b) {
+  return Math.hypot(a.x - b.x, a.y - b.y);
+}
+
+function ratioScore(value, target, tolerance) {
+  const difference = Math.abs(value - target);
+  return Math.max(
+    1,
+    Math.min(10, 10 - (difference / tolerance) * 5)
+  );
+}
+
+function getLevel(n) {
+  if (n < 3) return "Sub3";
+  if (n < 5) return "Sub5";
+  if (n < 6) return "LTN";
+  if (n < 7) return "MTN";
+  if (n < 8) return "HTN";
+  if (n < 9) return "Chad";
+  return "True Adam";
+}
+
+function calculate(landmarks) {
+  const d = (a,b) => distance(landmarks[a],landmarks[b]);
+
+  const faceWidth = d(234,454);
+  const faceHeight = d(10,152);
+  const jawWidth = d(172,397);
+  const chinWidth = d(149,378);
+  const cheekWidth = d(127,356);
+
+  const leftEye = d(33,133);
+  const rightEye = d(362,263);
+  const eyeGap = d(133,362);
+
+  const noseWidth = d(98,327);
+  const noseLength = d(168,2);
+  const mouthWidth = d(61,291);
+
+  const browLeft = Math.abs(
+    landmarks[105].y - landmarks[159].y
+  );
+  const browRight = Math.abs(
+    landmarks[334].y - landmarks[386].y
+  );
+
+  const center = landmarks[1].x;
+  const leftSide = Math.abs(landmarks[234].x-center);
+  const rightSide = Math.abs(landmarks[454].x-center);
+
+  const eyeSymmetry = Math.min(leftEye,rightEye) /
+    Math.max(leftEye,rightEye);
+
+  const faceSymmetry = Math.min(leftSide,rightSide) /
+    Math.max(leftSide,rightSide);
+
+  return [
+    ratioScore(faceWidth/faceHeight,0.72,0.18),
+    ratioScore(jawWidth/faceWidth,0.78,0.22),
+    ratioScore(chinWidth/faceWidth,0.40,0.20),
+    ratioScore(cheekWidth/faceWidth,0.80,0.20),
+    ratioScore((leftEye+rightEye)/2/faceWidth,0.22,0.10),
+    ratioScore((browLeft+browRight)/2/faceHeight,0.06,0.05),
+    ratioScore(noseWidth/faceWidth,0.24,0.12),
+    ratioScore(mouthWidth/faceWidth,0.38,0.16),
+    ratioScore(eyeSymmetry,1,0.35),
+    ratioScore(faceSymmetry,1,0.35),
+    ratioScore(noseLength/faceHeight,0.32,0.18)
+  ];
+}
+
+function showResults() {
+  const average = scores.reduce((a,b)=>a+b,0)/scores.length;
+
+  document.getElementById("total").textContent =
+    average.toFixed(1);
+
+  document.getElementById("level").textContent =
+    getLevel(average);
+
+  const box = document.getElementById("parameters");
+  box.innerHTML = "";
+
+  names.forEach((name,i) => {
+    const value = scores[i].toFixed(1);
+
+    const item = document.createElement("div");
+    item.className = "parameter";
+
+    item.innerHTML = `
+      <div class="top">
+        <span>${name}</span>
+        <b>${value}/10</b>
+      </div>
+      <div class="bar">
+        <div class="fill" style="width:${value*10}%"></div>
+      </div>
+    `;
+
+    box.appendChild(item);
+  });
+
+  const chart = document.getElementById("chart");
+  chart.innerHTML = "";
+
+  scores.forEach((value,i) => {
+    const column = document.createElement("div");
+    column.className = "column";
+    column.style.height = value*10 + "%";
+    column.innerHTML =
+      "<span>" + names[i].split(" ")[0] + "</span>";
+    chart.appendChild(column);
+  });
+
+  results.classList.remove("hidden");
+  results.scrollIntoView({behavior:"smooth"});
+}
+
+async function startAnalysis() {
+  if (!photo.files[0]) {
+    alert("Сначала загрузи фотографию!");
+    return;
+  }
+
+  button.disabled = true;
+
+  try {
+    await loadModel();
+
+    status.textContent = "Анализируем фотографию...";
+
+    await preview.decode();
+
+    const detection = landmarker.detect(preview);
+
+    if (!detection.faceLandmarks.length) {
+      throw new Error("Лицо не обнаружено. Попробуй другое фото.");
+    }
+
+    scores = calculate(detection.faceLandmarks[0]);
+
+    showResults();
+
+    status.textContent = "Анализ завершён!";
+  } catch(error) {
+    status.textContent = error.message ||
+      "Ошибка загрузки модели. Проверь интернет.";
+  } finally {
+    button.disabled = false;
+  }
+}
+
+button.onclick = null;
+button.addEventListener("click",startAnalysis);
 </script>
 
 </body>
