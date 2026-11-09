@@ -54,4 +54,135 @@ document.getElementById('again').onclick=()=>show('uploadScreen');
 const input=document.getElementById('photo'),preview=document.getElementById('preview'),next=document.getElementById('continue');
 input.onchange=()=>{const f=input.files&&input.files[0];if(!f)return;if(!f.type.startsWith('image/')){alert('Выбери файл изображения.');return}const url=URL.createObjectURL(f);preview.src=url;preview.style.display='block';next.disabled=false;next.style.opacity='1'};
 next.onclick=()=>show('resultScreen');
+</script><style>
+.ml-analysis{
+  margin:35px auto;
+  padding:25px 20px;
+  max-width:650px;
+  background:linear-gradient(145deg,#171717,#080808);
+  border:1px solid #383838;
+  border-radius:22px;
+  color:white;
+  font-family:Arial,sans-serif;
+  text-align:center;
+  box-shadow:0 15px 50px #000;
+}
+.ml-tag{
+  color:#aaa;
+  font-size:10px;
+  letter-spacing:5px;
+  margin-bottom:18px;
+}
+.ml-analysis h2{
+  font-family:Georgia,serif;
+  font-weight:400;
+  font-size:29px;
+  letter-spacing:2px;
+  margin:10px 0;
+}
+.ml-line{
+  width:55px;
+  height:1px;
+  background:#aaa;
+  margin:20px auto;
+}
+.ml-description{
+  color:#999;
+  font-size:13px;
+  line-height:1.7;
+  max-width:400px;
+  margin:15px auto 25px;
+}
+.ml-features{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+  margin:25px 0;
+}
+.ml-feature{
+  background:#111;
+  border:1px solid #292929;
+  padding:15px 8px;
+  border-radius:12px;
+  font-size:12px;
+  color:#ddd;
+}
+.ml-feature span{
+  display:block;
+  color:#777;
+  font-size:10px;
+  margin-top:6px;
+}
+.ml-start{
+  width:100%;
+  padding:19px;
+  background:linear-gradient(110deg,#eee,#999);
+  color:#080808;
+  border:0;
+  border-radius:10px;
+  font-weight:800;
+  letter-spacing:3px;
+  font-size:12px;
+  cursor:pointer;
+}
+.ml-start:active{transform:scale(.98)}
+.ml-footer{
+  margin-top:18px;
+  color:#555;
+  font-size:9px;
+  letter-spacing:2px;
+}
+</style>
+
+<script>
+(function(){
+  function addManyLake(){
+    const home=document.getElementById('home');
+    if(!home || document.getElementById('ml-analysis')) return;
+
+    const section=document.createElement('section');
+    section.id='ml-analysis';
+    section.className='ml-analysis';
+
+    section.innerHTML=`
+      <div class="ml-tag">MANY LAKE • FACIAL ANALYSIS</div>
+      <h2>DISCOVER YOUR<br>FACIAL STRUCTURE</h2>
+      <div class="ml-line"></div>
+
+      <p class="ml-description">
+        Детальный разбор черт лица, пропорций и симметрии.
+        Узнай свои сильные стороны и получи персональные рекомендации.
+      </p>
+
+      <div class="ml-features">
+        <div class="ml-feature">JAWLINE<span>Челюсть и подбородок</span></div>
+        <div class="ml-feature">CHEEKBONES<span>Скулы и структура</span></div>
+        <div class="ml-feature">EYES<span>Глаза и брови</span></div>
+        <div class="ml-feature">FACIAL HARMONY<span>Общие пропорции</span></div>
+        <div class="ml-feature">SYMMETRY<span>Симметрия лица</span></div>
+        <div class="ml-feature">RATING<span>Шкала от 1 до 10</span></div>
+      </div>
+
+      <button class="ml-start" id="ml-start-button">
+        НАЧАТЬ АНАЛИЗ →
+      </button>
+
+      <div class="ml-footer">PRECISION • STRUCTURE • BALANCE</div>
+    `;
+
+    home.appendChild(section);
+
+    document.getElementById('ml-start-button').onclick=function(){
+      const oldButton=document.getElementById('start');
+      if(oldButton) oldButton.click();
+      else document.getElementById('uploadScreen')?.scrollIntoView({behavior:'smooth'});
+    };
+  }
+
+  if(document.readyState==='loading'){
+    document.addEventListener('DOMContentLoaded',addManyLake);
+  }else{
+    addManyLake();
+  }
+})();
 </script></body></html>
