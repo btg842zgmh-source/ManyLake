@@ -315,4 +315,28 @@ document.getElementById('ml-run').onclick=async()=>{
   model?.close();
  }
 };
-</script></html>
+</script> <script>
+document.addEventListener('DOMContentLoaded',()=>{
+  const oldPhoto=document.getElementById('photo');
+  const newPhoto=document.getElementById('ml-photo');
+  const oldContinue=document.getElementById('continue');
+  const newRun=document.getElementById('ml-run');
+
+  if(!oldPhoto||!newPhoto||!newRun)return;
+
+  oldPhoto.addEventListener('change',()=>{
+    if(!oldPhoto.files?.length)return;
+
+    newPhoto.files=oldPhoto.files;
+    setTimeout(()=>newRun.click(),500);
+  });
+
+  if(oldContinue){
+    oldContinue.addEventListener('click',()=>{
+      if(newPhoto.files?.length){
+        setTimeout(()=>newRun.click(),800);
+      }
+    });
+  }
+});
+</script></body></html>
