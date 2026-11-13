@@ -253,7 +253,8 @@ document.getElementById('ml-run').onclick=async()=>{
    img.onload=resolve;img.onerror=reject;img.src=url;
   });
 
-  const result=model.detect(img);
+  
+const result = faceLandmarker.detect(img);
   URL.revokeObjectURL(url);
 
   if(!result.faceLandmarks?.length)
